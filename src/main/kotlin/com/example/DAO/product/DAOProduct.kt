@@ -13,5 +13,5 @@ interface DAOProduct {
 
     fun findShop(address: String): Int
 
-    suspend fun getDiscounts(): List<DiscountDto>
+    suspend fun getDiscounts(): DiscountsResponse?
 }

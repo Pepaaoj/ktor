@@ -142,8 +142,11 @@ class DAOUserImpl : DAOUser {
         }
     }
 
-    override suspend fun getAllShopsInCity(name: String): List<ShopByCityNameDto> = dbQuery {
-        Shop.select(Shop.idCityDistricts eq getCityDistrictsById(name)).map(::shopByCityName)
+    override suspend fun getAllShopsInCity(name: String): ShopResponse {
+        return transaction {
+            val response = Shop.select(Shop.idCityDistricts eq getCityDistrictsById(name)).map(::shopByCityName)
+            ShopResponse(response)
+        }
     }
 
     private fun bonusCardMapper(row: ResultRow) = BonusCardDto(

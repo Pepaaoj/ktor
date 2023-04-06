@@ -20,7 +20,7 @@ interface DAOUser {
 
     suspend fun getAllCities(): CityResponse
 
-    suspend fun getAllShopsInCity(name: String): List<ShopByCityNameDto>
+    suspend fun getAllShopsInCity(name: String): ShopResponse
 
     suspend fun getBonus(id: Int): BonusCardDto
 }

@@ -96,9 +96,10 @@ class DAOProductImpl : DAOProduct {
         image = row[Discount.image]
     )
 
-    override suspend fun getDiscounts(): List<DiscountDto> {
+    override suspend fun getDiscounts(): DiscountsResponse? {
         return transaction {
-            Discount.selectAll().map{ discountMapper(it) }
+            val response = Discount.selectAll().map{ discountMapper(it) }
+            DiscountsResponse(response)
         }
     }
 }

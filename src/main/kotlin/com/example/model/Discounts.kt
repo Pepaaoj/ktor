@@ -25,3 +25,8 @@ data class DiscountDto(
     val image: String,
     val description: String
 )
+
+@Serializable
+data class DiscountsResponse(
+    val response: List<DiscountDto>
+)

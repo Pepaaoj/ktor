@@ -86,7 +86,7 @@ fun Application.configureRouting(
         }
 
         authenticate("auth-jwt") {
-            put("/app/updateDate{number}") {
+            put("/app/updateData{number}") {
                 val number = call.parameters["number"]
                 val user = daoUser.getUser(number!!)
                 if (user == null) {
@@ -131,7 +131,7 @@ fun Application.configureRouting(
 
         get("/app/getDiscounts"){
             val discountDto = daoProduct.getDiscounts()
-            if (discountDto.isEmpty()){
+            if (discountDto == null){
                 call.respond(HttpStatusCode.NoContent, "Ошибка")
                 return@get
             }
@@ -149,9 +149,7 @@ fun Application.configureRouting(
                 call.respond(HttpStatusCode.NotFound, "Ошибка")
                 return@get
             }
-
             call.respond(daoUser.getBonus(user.id))
-
         }
 
     }

@@ -41,6 +41,11 @@ data class ShopByCityNameDto(
 )
 
 @Serializable
+data class ShopResponse(
+    val response: List<ShopByCityNameDto>
+)
+
+@Serializable
 data class SearchShopsInCity(
     val nameCity: String
 )

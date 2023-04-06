@@ -15,3 +15,4 @@ data class BonusCardDto(
     val cardNumber: Int,
     val bonusPoints: String,
 )
+
