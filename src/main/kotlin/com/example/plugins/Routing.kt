@@ -5,12 +5,12 @@ import com.example.DAO.product.DAOProductImpl
 import com.example.DAO.user.DAOUser
 import com.example.DAO.user.DAOUserImpl
 import com.example.model.*
+import com.example.model.categories.GetCategoryId
 import com.example.security.SHA256HashingService
 import com.example.security.SaltedHash
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -23,9 +23,6 @@ fun Application.configureRouting(
     routing {
         val daoProduct: DAOProduct = DAOProductImpl()
         val daoUser: DAOUser = DAOUserImpl()
-        get("/app/tree") {
-            call.respond(daoProduct.getMainGroup())
-        }
 
         authenticate("auth-jwt") {
             get("/app/getUser{number}") {
@@ -41,7 +38,7 @@ fun Application.configureRouting(
 
         get("/app/getShops{nameCity}") {
             val nameCity = call.parameters["nameCity"]
-            if (nameCity.isNullOrEmpty()){
+            if (nameCity.isNullOrEmpty()) {
                 call.respond(HttpStatusCode.Conflict, "Пользователь уже существует")
                 return@get
             }
@@ -117,41 +114,70 @@ fun Application.configureRouting(
             call.respond(daoUser.selectCity(number, cityId.id))
         }
 
-        post("/app/getProducts{address}") {
+        post("/app/getProducts") {
             val address = call.parameters["address"]
-            val group = call.receive<GetGroupId>()
+            val level = call.parameters["level"]
+            val group = call.receive<GetCategoryId>()
 
-            if (address.isNullOrEmpty()) {
+            if (address.isNullOrEmpty() || level.isNullOrEmpty()) {
                 call.respond(HttpStatusCode.NotFound, "Ошибка")
                 return@post
             }
             val shop = daoProduct.findShop(address)
-            call.respond(daoProduct.getProducts(shop, group.id))
+            call.respond(daoProduct.getProducts(shop, group.id, level.toInt()))
         }
 
-        get("/app/getDiscounts"){
+        get("/app/getDiscounts") {
             val discountDto = daoProduct.getDiscounts()
-            if (discountDto == null){
-                call.respond(HttpStatusCode.NoContent, "Ошибка")
-                return@get
-            }
             call.respond(discountDto)
         }
 
-        get("/app/getBonus{number}"){
+        get("/app/getCategory") {
+            val level = call.parameters["level"]
+            val idParent = call.parameters["idParent"]
+            if (level.isNullOrEmpty()) {
+                call.respond(HttpStatusCode.NotFound, "Ошибка")
+                return@get
+            }
+            when (level.toInt()) {
+                1 -> call.respond(daoProduct.getCategoriesLevel1())
+                2 -> {
+                    if (idParent.isNullOrEmpty()) {
+                        call.respond(HttpStatusCode.BadRequest, "Ошибка")
+                        return@get
+                    }
+                    call.respond(daoProduct.getCategoriesLevel2(idParent.toInt()))
+                }
+                3 -> {
+                    if (idParent.isNullOrEmpty()) {
+                        call.respond(HttpStatusCode.BadRequest, "Ошибка")
+                        return@get
+                    }
+                    call.respond(daoProduct.getCategoriesLevel3(idParent.toInt()))
+                }
+                4 -> {
+                    if (idParent.isNullOrEmpty()) {
+                        call.respond(HttpStatusCode.BadRequest, "Ошибка")
+                        return@get
+                    }
+                    call.respond(daoProduct.getCategoriesLevel4(idParent.toInt()))
+                }
+            }
+        }
+
+        get("/app/getBonus{number}") {
             val number = call.parameters["number"]
             if (number.isNullOrEmpty()) {
                 call.respond(HttpStatusCode.NotFound, "Ошибка")
                 return@get
             }
             val user = daoUser.getUser(number)
-            if (user == null ){
+            if (user == null) {
                 call.respond(HttpStatusCode.NotFound, "Ошибка")
                 return@get
             }
             call.respond(daoUser.getBonus(user.id))
         }
-
     }
 }
 
