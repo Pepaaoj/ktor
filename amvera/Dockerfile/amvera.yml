@@ -7,5 +7,5 @@ build:
   artifacts:
     build/libs/*.jar: /
 run:
-  jarName: com.example.ktor-sample-0.0.1.jar
+  jarName: com.example.ktor-sample-all.jar
   containerPort: 80
