@@ -8,4 +8,4 @@ build:
     build/libs/*.jar: /
 run:
   jarName: com.example.ktor-sample-all.jar
-  containerPort: 80
+
