@@ -1,0 +1,11 @@
+meta:
+  environment: jvm
+  toolchain:
+    name: gradle
+    version: 17
+build:
+  artifacts:
+    build/libs/*.jar: /
+run:
+  jarName: com.example.ktor-sample-0.0.1.jar
+  containerPort: 80
