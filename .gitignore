@@ -31,6 +31,6 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
-
+keys/
 ### VS Code ###
 .vscode/
